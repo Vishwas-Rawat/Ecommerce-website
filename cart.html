@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Shopping Cart</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
+    <style>
+      body {
+        background-color: #f8f9fa;
+        font-family: Arial, sans-serif;
+      }
+      h1 {
+        text-align: center;
+        margin-top: 30px;
+        color: #007bff;
+      }
+      a {
+        display: block;
+        margin: 20px 0;
+        text-align: right;
+        font-size: 1.1rem;
+        color: #007bff;
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+      .container {
+        margin-top: 50px;
+      }
+      .card {
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+      .card-title {
+        font-size: 1.25rem;
+        color: #333;
+      }
+      .card-body {
+        padding: 20px;
+      }
+      .btn-primary {
+        background-color: #007bff;
+        border: none;
+      }
+      .btn-primary:hover {
+        background-color: #0056b3;
+      }
+      #cartItemsList {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-around;
+      }
+      #totalPrice {
+        text-align: center;
+        font-size: 1.25rem;
+        margin-top: 20px;
+        color: #333;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <a href="./userPage.html">Back</a>
+      <h1>Your Shopping Cart</h1>
+      <p id="totalPrice"></p>
+      <div id="cartItemsList"></div>
+    </div>
+
+    <script>
+      function loadFromLocalStorage() {
+        let cart = localStorage.getItem("Cart");
+        let items = [];
+        if (cart) {
+          items = JSON.parse(cart);
+          console.log(items);
+        } else {
+          console.log("No items found in localStorage.");
+        }
+
+        document.getElementById("cartItemsList").innerHTML = items
+          .map(
+            (item, index) =>
+              `
+                <div class="col-md-6 col-lg-4 mb-4">
+                  <div class="card">
+                    <div class="card-body">
+                      <h5 class="card-title">${item.name}</h5>
+                      <p>Price: ₹${item.price}</p>
+                      <p>${item.description}</p>
+                      <button onclick="deleteItem(${index})" class="btn btn-primary">Delete</button>
+                    </div>
+                  </div>
+                </div>
+              `
+          )
+          .join("");
+        totalPrice();
+      }
+
+      function deleteItem(index) {
+        let cart = JSON.parse(localStorage.getItem("Cart"));
+        if (cart) {
+          cart.splice(index, 1);
+          localStorage.setItem("Cart", JSON.stringify(cart));
+          loadFromLocalStorage();
+        }
+      }
+
+      function totalPrice() {
+        let cart = JSON.parse(localStorage.getItem("Cart"));
+        let sum = 0;
+        if (cart) {
+          sum = cart.reduce(
+            (accumulatedPrice, item) => accumulatedPrice + item.price,
+            0
+          );
+        }
+        document.getElementById("totalPrice").innerHTML = `Total price: ₹${sum}`;
+      }
+
+      loadFromLocalStorage();
+    </script>
+  </body>
+</html>
